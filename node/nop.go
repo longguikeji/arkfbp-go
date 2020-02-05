@@ -8,17 +8,17 @@ type NopNode struct {
 }
 
 // Name ...
-func (n NopNode) Name() string {
+func (n *NopNode) Name() string {
 	return "Nop"
 }
 
 // Kind ...
-func (n NopNode) Kind() Kind {
+func (n *NopNode) Kind() Kind {
 	return KNop
 }
 
 // Run ...
-func (n NopNode) Run() interface{} {
+func (n *NopNode) Run() interface{} {
 	fmt.Println("NopNode...")
 	return nil
 }

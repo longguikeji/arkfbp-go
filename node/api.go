@@ -33,19 +33,20 @@ type APINode struct {
 }
 
 // Name ...
-func (n APINode) Name() string {
+func (n *APINode) Name() string {
 	return "API"
 }
 
 // Kind ...
-func (n APINode) Kind() Kind {
+func (n *APINode) Kind() Kind {
 	return KAPI
 }
 
 // Run ...
-func (n APINode) Run() interface{} {
-	fmt.Println("APINODE:RUN")
-	fmt.Println(n.Mode)
+func (n *APINode) Run() interface{} {
+
+	fmt.Printf("Mode: %s\n", n.Mode)
+
 	switch n.Mode {
 	case APIModeDirect:
 		return n.requestDirectly()
@@ -58,17 +59,19 @@ func (n APINode) Run() interface{} {
 }
 
 // Status ...
-func (n APINode) Status() int {
+func (n *APINode) Status() int {
 	return n.status
 }
 
 // StatusText ...
-func (n APINode) StatusText() string {
+func (n *APINode) StatusText() string {
 	return n.statusText
 }
 
-func (n APINode) requestDirectly() interface{} {
+func (n *APINode) requestDirectly() interface{} {
 	client := &http.Client{}
+
+	fmt.Println(n.Method, n.URL)
 
 	request, err := http.NewRequest(n.Method, n.URL, nil)
 	if err != nil {
@@ -85,6 +88,8 @@ func (n APINode) requestDirectly() interface{} {
 
 	err = json.NewDecoder(response.Body).Decode(&n.data)
 	_ = err
+
+	fmt.Println(response)
 
 	return response.Body
 }

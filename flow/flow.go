@@ -14,38 +14,35 @@ type Flow struct {
 	g *graph.Graph
 }
 
-func DeepFields(iface interface{}) []reflect.Value {
-	fields := make([]reflect.Value, 0)
-	ifv := reflect.ValueOf(iface)
-	ift := reflect.TypeOf(iface)
-
-	for i := 0; i < ift.NumField(); i++ {
-		v := ifv.Field(i)
-
-		switch v.Kind() {
-		case reflect.Struct:
-			fields = append(fields, DeepFields(v.Interface())...)
-		default:
-			fields = append(fields, v)
-		}
-	}
-
-	return fields
-}
-
 // Run ...
 func (f *Flow) Run() {
-	fmt.Println("Flow::Run")
-
 	g := f.g
 
 	n := g.FindEntryNode()
 	var nn node.INode
 	for n != nil {
 		copier.Copy(&nn, &n)
-		outputs := nn.Run()
-		fmt.Printf("outputs: %v\n", outputs)
-		n = g.FindNodeByID(n.Next())
+		fmt.Printf(">>> Executing Node %s\n", nn.ID())
+
+		var outputs interface{}
+
+		switch n.Kind() {
+		case node.KIF:
+			outputs = f.executeIFNode(nn)
+			fmt.Println(n)
+			fmt.Println(nn)
+		default:
+			outputs = f.executeNode(nn)
+		}
+
+		_ = outputs
+		next := f.getNextNodeID(nn)
+		fmt.Printf(">>> Next node: %s\n", next)
+		if next == "" {
+			break
+		}
+
+		n = g.FindNodeByID(next)
 	}
 
 }
@@ -53,6 +50,53 @@ func (f *Flow) Run() {
 // SetGraph ...
 func (f *Flow) SetGraph(g *graph.Graph) {
 	f.g = g
+}
+
+func (f *Flow) executeNode(n node.INode) interface{} {
+	return n.Run()
+}
+
+func (f *Flow) executeIFNode(n node.INode) interface{} {
+	// t := reflect.TypeOf(n)
+	// v := reflect.ValueOf(n)
+	// for i := 0; i < t.NumField(); i++ {
+	// 	f := t.Field(i)
+	// 	val := v.Field(i).Interface()
+	// 	if f.Type.Name() == "IFNode" {
+	// 		val := val.(node.IFNode)
+	// 		val.ExpressionRet = val.Expression()
+	// 	}
+	// 	break
+	// }
+
+	return n.Run()
+}
+
+func (f *Flow) getNextNodeID(n node.INode) string {
+	switch n.Kind() {
+	case node.KIF:
+		v := reflect.ValueOf(n)
+		v = reflect.Indirect(v)
+		t := reflect.TypeOf(reflect.Indirect(v))
+		for i := 0; i < t.NumField(); i++ {
+			val := v.Field(i).Interface()
+			fmt.Println(reflect.Indirect(v.Field(i)).Type().Name())
+			if reflect.Indirect(v.Field(i)).Type().Name() == "IFNode" {
+				val := val.(node.IFNode)
+				if val.ExpressionRet {
+					return val.PositiveNext
+				}
+
+				return val.NegativeNext
+			}
+			break
+		}
+
+		return ""
+	default:
+		return n.Next()
+	}
+
 }
 
 // New ...

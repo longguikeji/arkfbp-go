@@ -8,17 +8,17 @@ type StartNode struct {
 }
 
 // Name ...
-func (n StartNode) Name() string {
+func (n *StartNode) Name() string {
 	return "Start"
 }
 
 // Kind ...
-func (n StartNode) Kind() Kind {
+func (n *StartNode) Kind() Kind {
 	return KStart
 }
 
 // Run ...
-func (n StartNode) Run() interface{} {
+func (n *StartNode) Run() interface{} {
 	fmt.Println("StartNode...")
 	return nil
 }

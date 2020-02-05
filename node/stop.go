@@ -6,16 +6,16 @@ type StopNode struct {
 }
 
 // Name ...
-func (n StopNode) Name() string {
+func (n *StopNode) Name() string {
 	return "Stop"
 }
 
 // Kind ...
-func (n StopNode) Kind() Kind {
+func (n *StopNode) Kind() Kind {
 	return KStop
 }
 
 // Run ...
-func (n StopNode) Run() interface{} {
+func (n *StopNode) Run() interface{} {
 	return nil
 }

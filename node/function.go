@@ -6,16 +6,16 @@ type FunctionNode struct {
 }
 
 // Name ...
-func (n FunctionNode) Name() string {
+func (n *FunctionNode) Name() string {
 	return "Function"
 }
 
 // Kind ...
-func (n FunctionNode) Kind() Kind {
+func (n *FunctionNode) Kind() Kind {
 	return KFunction
 }
 
 // Run ...
-func (n FunctionNode) Run() interface{} {
+func (n *FunctionNode) Run() interface{} {
 	return nil
 }

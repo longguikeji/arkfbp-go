@@ -18,6 +18,7 @@ const (
 	KNop
 	KFunction
 	KAPI
+	KIF
 )
 
 // Node ...
