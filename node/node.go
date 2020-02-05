@@ -19,6 +19,7 @@ const (
 	KFunction
 	KAPI
 	KIF
+	KLoop
 )
 
 // Node ...

@@ -124,35 +124,56 @@ func (n *Node6) Run() interface{} {
 	return nil
 }
 
+// TestLoopNode ...
+type TestLoopNode struct {
+	node.LoopNode
+}
+
+// ID ...
+func (n *TestLoopNode) ID() string {
+	return "TestLoopNode"
+}
+
 func main() {
 	flow := MyFlow{}
 
 	g := graph.New()
-	// g.Add(Node2{})
-	// g.Add(Node1{})
+	// // g.Add(Node2{})
+	// // g.Add(Node1{})
 
-	nn := &Node3{
-		node.APINode{
-			Mode:   "direct",
-			Method: "GET",
-			URL:    "https://api.github.com/repos/longguikeji/arkid-core/stargazers",
+	// nn := &Node3{
+	// 	node.APINode{
+	// 		Mode:   "direct",
+	// 		Method: "GET",
+	// 		URL:    "https://api.github.com/repos/longguikeji/arkid-core/stargazers",
+	// 	},
+	// }
+	// g.Add(nn)
+
+	// g.Add(&Node4{
+	// 	node.IFNode{
+	// 		Expression: func() bool {
+	// 			fmt.Println("Node4.Expression")
+	// 			return true
+	// 		},
+	// 		PositiveNext: "Node5",
+	// 		NegativeNext: "Node6",
+	// 	},
+	// })
+
+	// g.Add(&Node5{})
+	// g.Add(&Node6{})
+
+	n := TestLoopNode{
+		node.LoopNode{
+			Init:    func() {},
+			Cond:    func() bool { return true },
+			Post:    func() {},
+			Process: func() { fmt.Println("Loop.Process") },
 		},
 	}
-	g.Add(nn)
 
-	g.Add(&Node4{
-		node.IFNode{
-			Expression: func() bool {
-				fmt.Println("Node4.Expression")
-				return true
-			},
-			PositiveNext: "Node5",
-			NegativeNext: "Node6",
-		},
-	})
-
-	g.Add(&Node5{})
-	g.Add(&Node6{})
+	g.Add(&n)
 
 	flow.SetGraph(g)
 	flow.Run()
