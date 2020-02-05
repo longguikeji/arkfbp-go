@@ -13,47 +13,48 @@ type MyFlow struct {
 	flow.Flow
 }
 
-// // Node1 ...
-// type Node1 struct {
-// 	node.StartNode
-// }
+// Node1 ...
+type Node1 struct {
+	node.StartNode
+}
 
-// // ID ...
-// func (n Node1) ID() string {
-// 	return "Node1"
-// }
+// ID ...
+func (n Node1) ID() string {
+	return "Node1"
+}
 
-// // Next ...
-// func (n Node1) Next() string {
-// 	return "Node2"
-// }
+// Next ...
+func (n Node1) Next() string {
+	return "Node2"
+}
 
-// // Run ...
-// func (n Node1) Run() interface{} {
-// 	fmt.Println("Node1 Run...")
-// 	return nil
-// }
+// Run ...
+func (n Node1) Run() interface{} {
+	fmt.Println("Node1 Run...")
+	return "node1ret"
+}
 
-// // Node2 ...
-// type Node2 struct {
-// 	node.NopNode
-// }
+// Node2 ...
+type Node2 struct {
+	node.NopNode
+}
 
-// // ID ...
-// func (n Node2) ID() string {
-// 	return "Node2"
-// }
+// ID ...
+func (n Node2) ID() string {
+	return "Node2"
+}
 
-// // Next ...
-// func (n Node2) Next() string {
-// 	return "Node3"
-// }
+// Next ...
+func (n Node2) Next() string {
+	return "Node3"
+}
 
-// // Run ...
-// func (n Node2) Run() interface{} {
-// 	fmt.Println("Node2 Run...")
-// 	return nil
-// }
+// Run ...
+func (n Node2) Run() interface{} {
+	fmt.Println("Node2 Run...")
+	fmt.Printf("i received inputs: %v\n", n.Inputs())
+	return nil
+}
 
 // Node3 ...
 type Node3 struct {
@@ -124,22 +125,22 @@ func (n *Node6) Run() interface{} {
 	return nil
 }
 
-// TestLoopNode ...
-type TestLoopNode struct {
-	node.LoopNode
-}
+// // TestLoopNode ...
+// type TestLoopNode struct {
+// 	node.LoopNode
+// }
 
-// ID ...
-func (n *TestLoopNode) ID() string {
-	return "TestLoopNode"
-}
+// // ID ...
+// func (n *TestLoopNode) ID() string {
+// 	return "TestLoopNode"
+// }
 
 func main() {
 	flow := MyFlow{}
 
 	g := graph.New()
-	// // g.Add(Node2{})
-	// // g.Add(Node1{})
+	g.Add(&Node2{})
+	g.Add(&Node1{})
 
 	// nn := &Node3{
 	// 	node.APINode{
@@ -164,16 +165,16 @@ func main() {
 	// g.Add(&Node5{})
 	// g.Add(&Node6{})
 
-	n := TestLoopNode{
-		node.LoopNode{
-			Init:    func() {},
-			Cond:    func() bool { return true },
-			Post:    func() {},
-			Process: func() { fmt.Println("Loop.Process") },
-		},
-	}
+	// n := TestLoopNode{
+	// 	node.LoopNode{
+	// 		Init:    func() {},
+	// 		Cond:    func() bool { return true },
+	// 		Post:    func() {},
+	// 		Process: func() { fmt.Println("Loop.Process") },
+	// 	},
+	// }
 
-	g.Add(&n)
+	// g.Add(&n)
 
 	flow.SetGraph(g)
 	flow.Run()
