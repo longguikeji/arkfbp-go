@@ -4,14 +4,24 @@ import (
 	"fmt"
 	"reflect"
 
-	"github.com/jinzhu/copier"
 	"git.intra.longguikeji.com/longguikeji/arkfbp-go/graph"
 	"git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
 	"git.intra.longguikeji.com/longguikeji/arkfbp-go/state"
+	"github.com/jinzhu/copier"
 )
+
+// IFlow ...
+type IFlow interface {
+	CreateGraph() *graph.Graph
+	Run()
+}
 
 // Flow ...
 type Flow struct {
+	// CreateGraph is called during the flow executing to generate the graph dependency
+	CreateGraph func() *graph.Graph
+
+	// Hooks
 	BeforeInitialize func()
 	Initialized      func()
 	BeforeExecute    func()
@@ -77,6 +87,10 @@ func (f *Flow) SetGraph(g *graph.Graph) {
 
 func (f *Flow) init() {
 	f.state = state.NewFlowState()
+
+	if f.CreateGraph != nil {
+		f.SetGraph(f.CreateGraph())
+	}
 }
 
 func (f *Flow) executeNode(n node.INode) interface{} {
