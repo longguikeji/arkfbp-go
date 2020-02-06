@@ -1,6 +1,6 @@
 package state
 
-import "github.com/rockli/arkfbp-go/node"
+import "git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
 
 // FlowState ...
 type FlowState struct {

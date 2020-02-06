@@ -5,9 +5,9 @@ import (
 	"reflect"
 
 	"github.com/jinzhu/copier"
-	"github.com/rockli/arkfbp-go/graph"
-	"github.com/rockli/arkfbp-go/node"
-	"github.com/rockli/arkfbp-go/state"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/graph"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/state"
 )
 
 // Flow ...

@@ -1,7 +1,7 @@
 package graph
 
 import (
-	"github.com/rockli/arkfbp-go/node"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
 )
 
 // Node ...
