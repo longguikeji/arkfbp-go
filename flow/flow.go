@@ -12,7 +12,6 @@ import (
 
 // IFlow ...
 type IFlow interface {
-	CreateGraph() *graph.Graph
 	Run()
 }
 
