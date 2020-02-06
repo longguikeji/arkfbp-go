@@ -12,7 +12,7 @@ import (
 
 // IFlow ...
 type IFlow interface {
-	Run()
+	Run() interface{}
 }
 
 // Flow ...
@@ -32,7 +32,7 @@ type Flow struct {
 }
 
 // Run ...
-func (f *Flow) Run() {
+func (f *Flow) Run() interface{} {
 	if f.BeforeInitialize != nil {
 		f.BeforeInitialize()
 	}
@@ -77,6 +77,8 @@ func (f *Flow) Run() {
 
 		n = g.FindNodeByID(next)
 	}
+
+	return lastOutputs
 }
 
 // SetGraph ...
