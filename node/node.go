@@ -1,5 +1,10 @@
 package node
 
+import (
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/request"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/response"
+)
+
 // INode ...
 type INode interface {
 	ID() string
@@ -10,9 +15,19 @@ type INode interface {
 
 	Inputs() interface{}
 	SetInputs(interface{})
-
 	Outputs() interface{}
 	SetOutputs(interface{})
+
+	Request() *request.Request
+	SetRequest(*request.Request)
+	Response() *response.Response
+	SetResponse(*response.Response)
+
+	State() *FlowState
+	SetState(*FlowState)
+
+	AppState() *AppState
+	SetAppState(*AppState)
 }
 
 // Kind ...
@@ -26,12 +41,26 @@ const (
 	KAPI
 	KIF
 	KLoop
+	KTest
 )
 
 // Node ...
 type Node struct {
+	// Hooks
+	BeforeInitialize func()
+	Initialized      func()
+	BeforeExecute    func()
+	Executed         func()
+	BeforeDestroy    func()
+
 	inputs  interface{}
 	outputs interface{}
+
+	request  *request.Request
+	response *response.Response
+
+	state    *FlowState
+	appState *AppState
 }
 
 // ID ...
@@ -57,6 +86,46 @@ func (n *Node) Outputs() interface{} {
 // SetOutputs ...
 func (n *Node) SetOutputs(v interface{}) {
 	n.outputs = v
+}
+
+// SetRequest ...
+func (n *Node) SetRequest(r *request.Request) {
+	n.request = r
+}
+
+// Request ...
+func (n *Node) Request() *request.Request {
+	return n.request
+}
+
+// SetResponse ...
+func (n *Node) SetResponse(r *response.Response) {
+	n.response = r
+}
+
+// Response ...
+func (n *Node) Response() *response.Response {
+	return n.response
+}
+
+// SetState ...
+func (n *Node) SetState(s *FlowState) {
+	n.state = s
+}
+
+// State ...
+func (n *Node) State() *FlowState {
+	return n.state
+}
+
+// SetAppState ...
+func (n *Node) SetAppState(s *AppState) {
+	n.appState = s
+}
+
+// AppState ...
+func (n *Node) AppState() *AppState {
+	return n.appState
 }
 
 // Name ...

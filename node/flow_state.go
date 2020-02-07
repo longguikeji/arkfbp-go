@@ -1,16 +1,14 @@
-package state
-
-import "git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
+package node
 
 // FlowState ...
 type FlowState struct {
 	data  interface{}
-	steps []node.INode
-	nodes map[string][]node.INode
+	steps []INode
+	nodes map[string][]INode
 }
 
 // Push ...
-func (st *FlowState) Push(n node.INode) {
+func (st *FlowState) Push(n INode) {
 	st.nodes[n.ID()] = append(st.nodes[n.ID()])
 	st.steps = append(st.steps, n)
 }
@@ -48,7 +46,7 @@ func (st *FlowState) Outputs(nodeID string) interface{} {
 // NewFlowState ...
 func NewFlowState() *FlowState {
 	flowState := &FlowState{
-		nodes: make(map[string][]node.INode),
+		nodes: make(map[string][]INode),
 	}
 	return flowState
 }

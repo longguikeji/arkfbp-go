@@ -3,16 +3,17 @@ package node
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
+
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/request"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/response"
 )
 
 const (
 	APIModeDirect = "direct"
 	APIModeProxy  = "proxy"
 )
-
-type APIResponse struct {
-}
 
 // APINode ...
 type APINode struct {
@@ -25,11 +26,8 @@ type APINode struct {
 	Headers map[string]string
 	Params  map[string]interface{}
 
-	resp       APIResponse
-	status     int
-	statusText string
-	header     map[string][]string
-	data       interface{}
+	Request  *request.Request
+	Response *response.Response
 }
 
 // Name ...
@@ -58,20 +56,8 @@ func (n *APINode) Run() interface{} {
 	return nil
 }
 
-// Status ...
-func (n *APINode) Status() int {
-	return n.status
-}
-
-// StatusText ...
-func (n *APINode) StatusText() string {
-	return n.statusText
-}
-
 func (n *APINode) requestDirectly() interface{} {
 	client := &http.Client{}
-
-	fmt.Println(n.Method, n.URL)
 
 	request, err := http.NewRequest(n.Method, n.URL, nil)
 	if err != nil {
@@ -80,16 +66,14 @@ func (n *APINode) requestDirectly() interface{} {
 
 	response, _ := client.Do(request)
 
-	n.status = response.StatusCode
-	n.statusText = response.Status
-	n.header = response.Header
-
+	n.Response.Status = response.StatusCode
+	n.Response.StatusText = response.Status
+	n.Response.Headers = response.Header
+	n.Response.Data, _ = ioutil.ReadAll(response.Body)
 	defer response.Body.Close()
 
-	err = json.NewDecoder(response.Body).Decode(&n.data)
+	err = json.NewDecoder(response.Body).Decode(&n.Response.Data)
 	_ = err
-
-	fmt.Println(response)
 
 	return response.Body
 }

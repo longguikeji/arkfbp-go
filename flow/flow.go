@@ -3,17 +3,14 @@ package flow
 import (
 	"fmt"
 	"reflect"
+	"strings"
 
 	"git.intra.longguikeji.com/longguikeji/arkfbp-go/graph"
 	"git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/state"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/request"
+	"git.intra.longguikeji.com/longguikeji/arkfbp-go/response"
 	"github.com/jinzhu/copier"
 )
-
-// IFlow ...
-type IFlow interface {
-	Run() interface{}
-}
 
 // Flow ...
 type Flow struct {
@@ -27,8 +24,12 @@ type Flow struct {
 	Executed         func()
 	BeforeDestroy    func()
 
-	g     *graph.Graph
-	state *state.FlowState
+	g        *graph.Graph
+	state    *node.FlowState
+	appState *node.AppState
+
+	request  *request.Request
+	response *response.Response
 }
 
 // Run ...
@@ -47,19 +48,24 @@ func (f *Flow) Run() interface{} {
 	var (
 		nn          node.INode
 		lastOutputs interface{}
+		outputs     interface{}
 	)
 
 	for n != nil {
 		copier.Copy(&nn, &n)
 		fmt.Printf(">>> Executing Node %s\n", nn.ID())
 
-		var outputs interface{}
-
 		nn.SetInputs(lastOutputs)
+		nn.SetRequest(f.request)
+		nn.SetResponse(f.response)
+		nn.SetState(f.state)
+		nn.SetAppState(f.appState)
 
 		switch n.Kind() {
 		case node.KIF:
 			outputs = f.executeIFNode(nn)
+		case node.KTest:
+			outputs = f.executeTestNode(nn)
 		default:
 			outputs = f.executeNode(nn)
 		}
@@ -70,7 +76,6 @@ func (f *Flow) Run() interface{} {
 		f.state.Push(nn)
 
 		next := f.getNextNodeID(nn)
-		fmt.Printf(">>> Next node: %s\n", next)
 		if next == "" {
 			break
 		}
@@ -86,12 +91,70 @@ func (f *Flow) SetGraph(g *graph.Graph) {
 	f.g = g
 }
 
+// SetRequest ...
+func (f *Flow) SetRequest(r *request.Request) {
+	f.request = r
+}
+
+// Request ...
+func (f *Flow) Request() *request.Request {
+	return f.request
+}
+
+// SetResponse ...
+func (f *Flow) SetResponse(r *response.Response) {
+	f.response = r
+}
+
+// Response ...
+func (f *Flow) Response() *response.Response {
+	return f.response
+}
+
 func (f *Flow) init() {
-	f.state = state.NewFlowState()
+	f.state = node.NewFlowState()
 
 	if f.CreateGraph != nil {
 		f.SetGraph(f.CreateGraph())
 	}
+
+	if f.response == nil {
+		f.response = new(response.Response)
+	}
+}
+
+func (f *Flow) executeTestNode(n node.INode) interface{} {
+	var (
+		tn node.INode
+	)
+	copier.Copy(&tn, &n)
+
+	nodeType := reflect.TypeOf(tn)
+	nodeValue := reflect.ValueOf(tn).Elem()
+	for i := 0; i < nodeType.NumMethod(); i++ {
+		method := nodeType.Method(i)
+		if strings.HasPrefix(method.Name, "Test") {
+			// Execute the flow
+
+			for j := 0; j < nodeValue.NumField(); j++ {
+				t := nodeValue.Field(j)
+				if t.Type().Name() == "TestNode" {
+					tt := t.Addr().Interface().(*node.TestNode)
+					fmt.Printf("> Execute test flow: %s\n", reflect.ValueOf(tt.Flow).Elem().Type().Name())
+					tt.Flow.Run()
+					fmt.Printf("> End the execution\n")
+					break
+				}
+			}
+
+			// Invoke TestCase
+			method.Func.Call([]reflect.Value{
+				reflect.ValueOf(tn),
+			})
+		}
+	}
+
+	return nil
 }
 
 func (f *Flow) executeNode(n node.INode) interface{} {
