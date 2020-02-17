@@ -60,13 +60,13 @@ func (n *APINode) requestDirectly() interface{} {
 
 	response, _ := client.Do(request)
 
-	n.Response.Status = response.StatusCode
-	n.Response.StatusText = response.Status
-	n.Response.Headers = response.Header
-	n.Response.Data, _ = ioutil.ReadAll(response.Body)
+	n.Response().Status = response.StatusCode
+	n.Response().StatusText = response.Status
+	n.Response().Headers = response.Header
+	n.Response().Data, _ = ioutil.ReadAll(response.Body)
 	defer response.Body.Close()
 
-	err = json.NewDecoder(response.Body).Decode(&n.Response.Data)
+	err = json.NewDecoder(response.Body).Decode(&n.Response().Data)
 	_ = err
 
 	return response.Body
