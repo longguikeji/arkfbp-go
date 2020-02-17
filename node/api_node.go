@@ -5,9 +5,6 @@ import (
 	"fmt"
 	"io/ioutil"
 	"net/http"
-
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/request"
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/response"
 )
 
 const (
@@ -25,9 +22,6 @@ type APINode struct {
 	Auth    interface{}
 	Headers map[string]string
 	Params  map[string]interface{}
-
-	Request  *request.Request
-	Response *response.Response
 }
 
 // Name ...
