@@ -33,7 +33,7 @@ type Flow struct {
 }
 
 // Run ...
-func (f *Flow) Run() interface{} {
+func (f *Flow) Run(inputs interface{}) interface{} {
 	if f.BeforeInitialize != nil {
 		f.BeforeInitialize()
 	}
@@ -50,6 +50,10 @@ func (f *Flow) Run() interface{} {
 		lastOutputs interface{}
 		outputs     interface{}
 	)
+
+	if inputs != nil {
+		lastOutputs = inputs
+	}
 
 	for n != nil {
 		copier.Copy(&nn, &n)
@@ -141,7 +145,7 @@ func (f *Flow) executeTestNode(n node.INode) interface{} {
 				if t.Type().Name() == "TestNode" {
 					tt := t.Addr().Interface().(*node.TestNode)
 					fmt.Printf("> Execute test flow: %s\n", reflect.ValueOf(tt.Flow).Elem().Type().Name())
-					tt.Flow.Run()
+					tt.Flow.Run(nil)
 					fmt.Printf("> End the execution\n")
 					break
 				}

@@ -2,5 +2,5 @@ package intr
 
 // IFlow ...
 type IFlow interface {
-	Run() interface{}
+	Run(interface{}) interface{}
 }
