@@ -1,6 +1,6 @@
 package node
 
-import "git.intra.longguikeji.com/longguikeji/arkfbp-go/intr"
+import "github.com/longguikeji/arkfbp-go/intr"
 
 // TestNode ...
 type TestNode struct {

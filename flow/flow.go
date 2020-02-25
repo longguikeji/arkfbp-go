@@ -5,10 +5,10 @@ import (
 	"reflect"
 	"strings"
 
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/graph"
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/node"
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/request"
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/response"
+	"github.com/longguikeji/arkfbp-go/graph"
+	"github.com/longguikeji/arkfbp-go/node"
+	"github.com/longguikeji/arkfbp-go/request"
+	"github.com/longguikeji/arkfbp-go/response"
 	"github.com/jinzhu/copier"
 )
 

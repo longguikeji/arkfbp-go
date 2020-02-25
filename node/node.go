@@ -1,8 +1,8 @@
 package node
 
 import (
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/request"
-	"git.intra.longguikeji.com/longguikeji/arkfbp-go/response"
+	"github.com/longguikeji/arkfbp-go/request"
+	"github.com/longguikeji/arkfbp-go/response"
 )
 
 // INode ...
